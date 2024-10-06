@@ -17,10 +17,14 @@ def decode_bencode(bencoded_value):
         return bencoded_value[first_colon_index+1:]
     elif chr(bencoded_value[0]) == "i" and chr(bencoded_value[-1] == "e"):
         return int(bencoded_value[1:-1])
+    elif (chr(bencoded_value[0]) == "l" or chr(bencoded_value[0]) == "d") and chr(bencoded_value[-1]) == "e":
+        return bencodepy.decode(bencoded_value)
     
+    '''elif chr(bencoded_value[0]) == "d" and chr(bencoded_value[-1]) == "e":
+        return bencodepy.decode(bencoded_value)'''    
     else:
-       # raise NotImplementedError("Only strings are supported at the moment")
-       return bencodepy.decode(bencoded_value)
+       raise NotImplementedError("Only strings are supported at the moment")
+       
 
 
 def main():
