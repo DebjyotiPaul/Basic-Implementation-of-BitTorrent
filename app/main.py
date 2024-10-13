@@ -317,13 +317,27 @@ def magnet_handshake(ip,port,digest,ext_byte):
                 received = True
         print(message)
         print(ext_support)
-        # if ext_support:
-        #     received = False
-        #     ext_id = 0
-        #     while not received:
-        #         length = client.recv(4)
-        #         received = True
-        #         print('123',length)
+        if ext_support:
+        #  EXTENSION HANDSHAKE
+            received = False
+            ext_id = 0
+            while not received:
+                length = client.recv(4)
+                if length and int.from_bytes(length):
+                    extension = client.recv(int.from_bytes(length))
+                    print(f"Received {int.from_bytes(length)} bytes")
+                    type = extension[0]
+                    print(extension)
+                    if type == 20:
+                        print("<<< EXTENSION HANDSHAKE")
+                        # print(extension[2:])
+                        payload = bencodepy.decode(extension[2:])
+                        # print(payload)
+                        if b"m" in payload:
+                            if b"ut_metadata" in payload[b"m"]:
+                                print("Extension id:", payload[b"m"][b"ut_metadata"])
+                                ext_id = payload[b"m"][b"ut_metadata"]
+                                received = True
         payload = {}
         payload["m"] = {}
         payload["m"]["ut_metadata"] = 16
@@ -333,7 +347,14 @@ def magnet_handshake(ip,port,digest,ext_byte):
         
         packet = packet_header + b"\x14\x00" + enc_payload
         client.sendall(packet)
-    return peer_id.hex(),ext_support
+        length = client.recv(4)
+        print(int.from_bytes(length))
+        message = client.recv(int.from_bytes(length))
+        while len(message) < int.from_bytes(length):
+            message += client.recv(int.from_bytes(length) - len(message))
+        print(message)
+        decoded = bencodepy.decode(message[2:])
+    return peer_id.hex(),ext_support,decoded[b"m"][b"ut_metadata"]
 
 def main():
     command = sys.argv[1]
@@ -444,8 +465,9 @@ def main():
         data["info"] = {}
         data["info"]["length"] = 1024
         peers_list = get_peers(digest, data)
-        peer_id,ext_support = magnet_handshake(peers_list[0][0],peers_list[0][1],digest,int(0x100000).to_bytes(8))
+        peer_id,ext_support, extend_handshake_id = magnet_handshake(peers_list[0][0],peers_list[0][1],digest,int(0x100000).to_bytes(8))
         print("Peer ID:",peer_id)
+        print("Peer Metadata Extension ID:",extend_handshake_id)
         if ext_support:
             print("Peer supports extensions")
     else:
