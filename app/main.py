@@ -302,6 +302,37 @@ def magnet_handshake(ip,port,digest,ext_byte):
         reply = client.recv(68)
         peer_id = reply[48:]
         ext_support = reply[25] == b"\x10"
+        print('x',reply[20:28])
+        received = False
+        while not received:
+            length = client.recv(4)
+            print(int.from_bytes(length))
+            message = client.recv(int.from_bytes(length))
+            handshaketype = message[0]
+            print(handshaketype)
+            print(message)
+            if handshaketype == 5:
+                while len(message) < int.from_bytes(length):
+                    message += client.recv(int.from_bytes(length) - len(message))
+                received = True
+        print(message)
+        print(ext_support)
+        # if ext_support:
+        #     received = False
+        #     ext_id = 0
+        #     while not received:
+        #         length = client.recv(4)
+        #         received = True
+        #         print('123',length)
+        payload = {}
+        payload["m"] = {}
+        payload["m"]["ut_metadata"] = 16
+        enc_payload = bencodepy.encode(payload)
+        print(enc_payload)
+        packet_header = int(len(enc_payload) + 1 + 1).to_bytes(4)
+        
+        packet = packet_header + b"\x14\x00" + enc_payload
+        client.sendall(packet)
     return peer_id.hex(),ext_support
 
 def main():
