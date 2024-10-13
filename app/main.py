@@ -107,7 +107,7 @@ def download_piece(decoded,hashed_info,piece_index,outputfile):
     try:
         peer_id_name = get_peer_id(peers[peer_index][0],peers[peer_index][1],hashed_info)
     except IndexError:
-        print('again this stupid error for piece ',piece_index)
+        #print('again this stupid error for piece ',piece_index)
         return download_piece(decoded,hashed_info,piece_index,outputfile)
     print(f"{piece_index} is downloaded from {peer_id_name}")
     # print("Stage1 for ",piece_index)
@@ -118,7 +118,7 @@ def download_piece(decoded,hashed_info,piece_index,outputfile):
         client.send(
             b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00"
                 + hashed_info
-                + "testdjp".encode()
+                + "abcdefghijklmnoptest".encode()
         )
         print("Stage 1.1 for ",piece_index,peer_id_name)
         response = client.recv(68)
@@ -202,7 +202,7 @@ def get_peer_id(ip,port,info_hash):
             client.send(
                 b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00"
                 + info_hash
-                + "testdjp".encode()
+                + "abcdefghijklmnoptest".encode()
             )
             reply = client.recv(68)
     return reply[48:].hex()
@@ -215,7 +215,7 @@ def get_peers(info_hash,decoded):
     try:
         response = requests.get(decoded[b'announce'].decode(),params={
                 'info_hash':info_hash,
-                'peer_id':'testdjp',
+                'peer_id':'abcdefghijklmnoptest',
                 'port':6851,
                 'uploaded':0,
                 'downloaded':0,
@@ -225,7 +225,7 @@ def get_peers(info_hash,decoded):
     except KeyError:
         response = requests.get(decoded['announce'],params={
                 'info_hash':info_hash,
-                'peer_id':'testdjp',
+                'peer_id':'abcdefghijklmnoptest',
                 'port':6851,
                 'uploaded':0,
                 'downloaded':0,
@@ -297,7 +297,7 @@ def magnet_handshake(ip,port,digest,ext_byte):
         client.send(
             b"\x13BitTorrent protocol"+ext_byte
             + digest
-                + "testdjp".encode()
+                + "abcdefghijklmnoptest".encode()
         )
         reply = client.recv(68)
         peer_id = reply[48:]
@@ -339,7 +339,7 @@ def main():
         hashed_info = hashlib.sha1(encoded_info)
         response = requests.get(decoded[b'announce'].decode(),params={
             'info_hash':hashed_info.digest(),
-            'peer_id':'testdjp',
+            'peer_id':'abcdefghijklmnoptest',
             'port':3000,
             'uploaded':0,
             'downloaded':0,
@@ -368,7 +368,7 @@ def main():
             client.send(
                 b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00"
                 + hashed_info.digest()
-                + "testdjp".encode()
+                + "abcdefghijklmnoptest".encode()
             )
             reply = client.recv(68)
         print("Peer ID:", reply[48:].hex())
