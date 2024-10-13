@@ -33,6 +33,10 @@ def main():
         print(f'Tracker URL: {info_dict[b"announce"].decode()}')
         print(f'Length: {info_dict[b"info"][b"length"]}')
         print(f"Info Hash: {info_hash.hexdigest()}")
+        print(f'Piece Length: {info_dict[b"info"][b"piece length"]}')
+        print(f"Piece Hashes: ")
+        for i in range(0, len(info_dict[b"info"][b"pieces"]), 20):
+            print(info_dict[b"info"][b"pieces"][i : i + 20].hex())
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
