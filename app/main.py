@@ -212,15 +212,26 @@ def extract_pieces_hashes(pieces):
         pieces_list.append(pieces[i:i+20].hex())
     return pieces_list
 def get_peers(info_hash,decoded):
-    response = requests.get(decoded[b'announce'].decode(),params={
-            'info_hash':info_hash,
-            'peer_id':'nawfabdullahahahahah',
-            'port':6851,
-            'uploaded':0,
-            'downloaded':0,
-            'left':decoded[b'info'][b'length'],
-            'compact':1
-        })
+    try:
+        response = requests.get(decoded[b'announce'].decode(),params={
+                'info_hash':info_hash,
+                'peer_id':'nawfabdullahahahahah',
+                'port':6851,
+                'uploaded':0,
+                'downloaded':0,
+                'left':decoded[b'info'][b'length'],
+                'compact':1
+            })
+    except KeyError:
+        response = requests.get(decoded['announce'],params={
+                'info_hash':info_hash,
+                'peer_id':'nawfabdullahahahahah',
+                'port':6851,
+                'uploaded':0,
+                'downloaded':0,
+                'left':decoded['info']['length'],
+                'compact':1
+            })
     decoded_response = bencodepy.decode(response.content)
     peer_list = []
     for i in range(0,len(decoded_response[b'peers']),6):
@@ -279,6 +290,20 @@ def magnet_parser(link):
         paramter = i.split('=')
         params_dict[paramter[0]] = paramter[1]
     return params_dict
+
+def magnet_handshake(ip,port,digest,ext_byte):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+        client.connect((ip, port))
+        client.send(
+            b"\x13BitTorrent protocol"+ext_byte
+            + digest
+                + "nawfabdullahahahahah".encode()
+        )
+        reply = client.recv(68)
+        peer_id = reply[48:]
+        ext_support = reply[25] == b"\x10"
+    return peer_id.hex(),ext_support
+
 def main():
     command = sys.argv[1]
     if command == "decode":
@@ -377,6 +402,21 @@ def main():
         parsed =  magnet_parser(magnet_url)
         print("Tracker URL:",urllib.parse.unquote(parsed['tr']))
         print("Info Hash:",parsed['xt'].split(':')[-1])
+    elif command == "magnet_handshake":
+        magnet_url = sys.argv[2]
+        parsed =  magnet_parser(magnet_url)
+        tracker = urllib.parse.unquote(parsed['tr'])
+        hexdigest = parsed['xt'].split(':')[-1]
+        digest = bytes.fromhex(hexdigest)
+        data = {}
+        data["announce"] = tracker
+        data["info"] = {}
+        data["info"]["length"] = 1024
+        peers_list = get_peers(digest, data)
+        peer_id,ext_support = magnet_handshake(peers_list[0][0],peers_list[0][1],digest,int(0x100000).to_bytes(8))
+        print("Peer ID:",peer_id)
+        if ext_support:
+            print("Peer supports extensions")
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
