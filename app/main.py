@@ -118,7 +118,7 @@ def download_piece(decoded,hashed_info,piece_index,outputfile):
         client.send(
             b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00"
                 + hashed_info
-                + "nawfabdullahahahahah".encode()
+                + "testdjp".encode()
         )
         print("Stage 1.1 for ",piece_index,peer_id_name)
         response = client.recv(68)
@@ -202,7 +202,7 @@ def get_peer_id(ip,port,info_hash):
             client.send(
                 b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00"
                 + info_hash
-                + "nawfabdullahahahahah".encode()
+                + "testdjp".encode()
             )
             reply = client.recv(68)
     return reply[48:].hex()
@@ -215,7 +215,7 @@ def get_peers(info_hash,decoded):
     try:
         response = requests.get(decoded[b'announce'].decode(),params={
                 'info_hash':info_hash,
-                'peer_id':'nawfabdullahahahahah',
+                'peer_id':'testdjp',
                 'port':6851,
                 'uploaded':0,
                 'downloaded':0,
@@ -225,7 +225,7 @@ def get_peers(info_hash,decoded):
     except KeyError:
         response = requests.get(decoded['announce'],params={
                 'info_hash':info_hash,
-                'peer_id':'nawfabdullahahahahah',
+                'peer_id':'testdjp',
                 'port':6851,
                 'uploaded':0,
                 'downloaded':0,
@@ -247,7 +247,7 @@ def get_message(s):
         length = s.recv(4)
     message = s.recv(int.from_bytes(length))
     while len(message) < int.from_bytes(length):
-        print("NOOOOO HEREEEEEEE")
+        #print("NOOOOO HEREEEEEEE")
         message += s.recv(int.from_bytes(length) - len(message))
     return length + message
             
@@ -271,12 +271,12 @@ def download(outputfile, filename):
         threads.append(t)       
         t.start()
         piecefiles.append(out)
-    print('\n\n\n\n\n\nthreads are running\n\n\n\n\n\n')
+    #print('\n\n\n\n\n\nthreads are running\n\n\n\n\n\n')
     for t in range(0,len(threads)):
         threads[t].join()
         # print(f'{t}th thread is doneh')
     
-    print('\n\n\n\n\n\nthreads are joined\n\n\n\n\n\n')
+    #print('\n\n\n\n\n\nthreads are joined\n\n\n\n\n\n')
     
     with open(outputfile, "wb") as result_file:
         for piecefile in piecefiles:
@@ -297,7 +297,7 @@ def magnet_handshake(ip,port,digest,ext_byte):
         client.send(
             b"\x13BitTorrent protocol"+ext_byte
             + digest
-                + "nawfabdullahahahahah".encode()
+                + "testdjp".encode()
         )
         reply = client.recv(68)
         peer_id = reply[48:]
@@ -339,7 +339,7 @@ def main():
         hashed_info = hashlib.sha1(encoded_info)
         response = requests.get(decoded[b'announce'].decode(),params={
             'info_hash':hashed_info.digest(),
-            'peer_id':'nawfabdullahahahahah',
+            'peer_id':'testdjp',
             'port':3000,
             'uploaded':0,
             'downloaded':0,
@@ -368,7 +368,7 @@ def main():
             client.send(
                 b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00"
                 + hashed_info.digest()
-                + "nawfabdullahahahahah".encode()
+                + "testdjp".encode()
             )
             reply = client.recv(68)
         print("Peer ID:", reply[48:].hex())
