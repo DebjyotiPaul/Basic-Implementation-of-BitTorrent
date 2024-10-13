@@ -114,25 +114,25 @@ def download_piece(decoded,hashed_info,piece_index,outputfile):
     with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as client:
         
         client.connect((peers[peer_index][0],peers[peer_index][1]))
-        print("Stage 1 for ",piece_index,peer_id_name)
+        #print("Stage 1 for ",piece_index,peer_id_name)
         client.send(
             b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00"
                 + hashed_info
                 + "abcdefghijklmnoptest".encode()
         )
-        print("Stage 1.1 for ",piece_index,peer_id_name)
+        #print("Stage 1.1 for ",piece_index,peer_id_name)
         response = client.recv(68)
-        print("Stage 1.2 for ",piece_index,peer_id_name)
+        #print("Stage 1.2 for ",piece_index,peer_id_name)
         # print(response[48:].hex())
         message = get_message(client)
         if(message==False):
             return download_piece(decoded,hashed_info,piece_index,outputfile)
-        print("Stage 2 for ",piece_index,peer_id_name)
-        print("message is received for", piece_index)
+        #print("Stage 2 for ",piece_index,peer_id_name)
+        #print("message is received for", piece_index)
         # print(message.hex())
         while int(message[4]) != 5:
             message = get_message(client)
-            print('checking for interested',peer_index)
+            #print('checking for interested',peer_index)
         value1 = 1
         value2 = 2
         # print(message.hex())
@@ -152,7 +152,7 @@ def download_piece(decoded,hashed_info,piece_index,outputfile):
         print("Stage3 for ",piece_index,peer_id_name)
         while int(message[4]) != 1:
             message = get_message(client)
-            print('checking for unchoked',peer_index)
+            #print('checking for unchoked',peer_index)
         # print(message.hex())
         # print("\n\nStage4 for ",piece_index)
         print('stage 4',piece_index,peer_id_name)
@@ -261,7 +261,7 @@ def download(outputfile, filename):
     total_pieces = len(extract_pieces_hashes(decoded_value[b"info"][b"pieces"]))
     piecefiles = []
     threads = []
-    print('Total number of pieces: ',total_pieces)
+    #print('Total number of pieces: ',total_pieces)
     for piece in range(0, total_pieces):
         info = bencodepy.encode(decoded_value[b'info'])
         encoded_info = info
@@ -325,8 +325,8 @@ def main():
         print(f"Length: {decoded[b'info'][b'length']}")
         # print(hashlib.sha1(encode_bencode(decoded['info']).encode()).hexdigest())
         print(f"Info Hash: {hashed_info.hexdigest()}")
-        print(f'Piece Length: {decoded[b'info'][b"piece length"]}')
-        print(f"Piece Hashes: ")
+        #print(f'Piece Length: {decoded[b'info'][b"piece length"]}')
+        #print(f"Piece Hashes: ")
         for i in range(0,len(decoded[b'info'][b"pieces"]),20):
             print(decoded[b'info'][b'pieces'][i:i+20].hex())
     elif command == 'peers':
@@ -351,7 +351,7 @@ def main():
             peer = decoded_response[b'peers'][i : i + 6]
             ip_address = f"{peer[0]}.{peer[1]}.{peer[2]}.{peer[3]}"
             port = int.from_bytes(peer[4:],byteorder='big')
-            print(f"{ip_address}:{port}")
+            #print(f"{ip_address}:{port}")
         
     elif command == 'handshake':
         file_name = sys.argv[2]
@@ -396,7 +396,7 @@ def main():
         outputfile = sys.argv[3]
         filename = sys.argv[4]
         download(outputfile, filename)
-        print("Download %s to %s" % (filename, outputfile))
+        #print("Download %s to %s" % (filename, outputfile))
     elif command == "magnet_parse":
         magnet_url = sys.argv[2]
         parsed =  magnet_parser(magnet_url)
