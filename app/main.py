@@ -351,7 +351,7 @@ def main():
             peer = decoded_response[b'peers'][i : i + 6]
             ip_address = f"{peer[0]}.{peer[1]}.{peer[2]}.{peer[3]}"
             port = int.from_bytes(peer[4:],byteorder='big')
-            #print(f"{ip_address}:{port}")
+            print(f"{ip_address}:{port}")
         
     elif command == 'handshake':
         file_name = sys.argv[2]
@@ -396,7 +396,7 @@ def main():
         outputfile = sys.argv[3]
         filename = sys.argv[4]
         download(outputfile, filename)
-        #print("Download %s to %s" % (filename, outputfile))
+        print("Download %s to %s" % (filename, outputfile))
     elif command == "magnet_parse":
         magnet_url = sys.argv[2]
         parsed =  magnet_parser(magnet_url)
