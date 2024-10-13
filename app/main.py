@@ -325,8 +325,8 @@ def main():
         print(f"Length: {decoded[b'info'][b'length']}")
         # print(hashlib.sha1(encode_bencode(decoded['info']).encode()).hexdigest())
         print(f"Info Hash: {hashed_info.hexdigest()}")
-        #print(f'Piece Length: {decoded[b'info'][b"piece length"]}')
-        #print(f"Piece Hashes: ")
+        print(f'Piece Length: {decoded[b'info'][b"piece length"]}')
+        print(f"Piece Hashes: ")
         for i in range(0,len(decoded[b'info'][b"pieces"]),20):
             print(decoded[b'info'][b'pieces'][i:i+20].hex())
     elif command == 'peers':
