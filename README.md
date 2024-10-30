@@ -1,7 +1,4 @@
-![image](https://github.com/user-attachments/assets/a9915a1e-f3f5-45d2-abf0-f7b63e108001)
-
-![btt green](https://github.com/user-attachments/assets/24f8e9dd-dc95-429d-8fc0-66410daeb585)
-
+![btt purple](https://github.com/user-attachments/assets/c1ba727b-9d86-4fbc-be66-acedf0ea91cf)
 
 ## Python BitTorrent Client
 
