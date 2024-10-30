@@ -1,5 +1,5 @@
 
-![btt purple 1200px wide](https://github.com/user-attachments/assets/9ea7e0b8-9fdc-4748-89f5-bdbb18406f91)
+![btt purple 550px height](https://github.com/user-attachments/assets/f1be1e31-79f1-44ff-b060-125374230090)
 
 ## Python BitTorrent Client
 
